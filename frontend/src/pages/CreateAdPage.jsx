@@ -1,0 +1,155 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AreaAutocomplete from '../components/AreaAutocomplete/AreaAutocomplete';
+import FormField from '../components/FormField';
+import { createAd } from '../api/ads';
+import { validateAd } from '../utils/validation';
+import { AD_TYPES, PROPERTY_TYPES } from '../constants';
+
+const INITIAL_VALUES = {
+  title: '',
+  adType: 'sale',
+  propertyType: 'house',
+  area: null,
+  price: '',
+  size: '',
+  levels: '',
+  bedrooms: '',
+  bathrooms: '',
+  description: '',
+};
+
+const toNumber = (v) => (v === '' ? undefined : Number(v));
+
+/** Converts form state (strings) into the shape the API expects. */
+function toPayload(values) {
+  return {
+    title: values.title.trim(),
+    adType: values.adType,
+    propertyType: values.propertyType,
+    area: { id: values.area.id, name: values.area.name },
+    price: toNumber(values.price),
+    size: toNumber(values.size),
+    levels: toNumber(values.levels),
+    bedrooms: toNumber(values.bedrooms),
+    bathrooms: toNumber(values.bathrooms),
+    description: values.description.trim(),
+  };
+}
+
+/** Page with the form to create a new property ad. */
+export default function CreateAdPage() {
+  const [values, setValues] = useState(INITIAL_VALUES);
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  // One handler for all normal inputs, using the input's `name` attribute
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+
+  function handleAreaChange(area) {
+    setValues((prev) => ({ ...prev, area }));
+    if (area) setErrors((prev) => ({ ...prev, area: undefined }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault(); // stop the browser from reloading the page
+
+    const found = validateAd(values);
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const ad = await createAd(toPayload(values));
+      navigate(`/ads/${ad._id}`);
+    } catch (err) {
+      if (err.errors) setErrors(err.errors); // field errors from the backend
+      setSubmitError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <section className="page">
+      <h1>New property</h1>
+
+      {submitError && <div className="alert" role="alert">{submitError}</div>}
+
+      <form className="ad-form" onSubmit={handleSubmit} noValidate>
+        <FormField label="Title" htmlFor="title" error={errors.title} required>
+          <input id="title" name="title" value={values.title} onChange={handleChange} />
+        </FormField>
+
+        <fieldset className="form-field">
+          <legend>Ad type *</legend>
+          <div className="radio-group">
+            {AD_TYPES.map((t) => (
+              <label key={t.value} className="radio">
+                <input
+                  type="radio"
+                  name="adType"
+                  value={t.value}
+                  checked={values.adType === t.value}
+                  onChange={handleChange}
+                />
+                {t.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <FormField label="Property type" htmlFor="propertyType" error={errors.propertyType} required>
+          <select id="propertyType" name="propertyType" value={values.propertyType} onChange={handleChange}>
+            {PROPERTY_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+        </FormField>
+
+        <FormField label="Area" htmlFor="area" error={errors.area} required>
+          <AreaAutocomplete id="area" value={values.area} onChange={handleAreaChange} error={errors.area} />
+        </FormField>
+
+        <div className="form-grid">
+          <FormField label="Price (€)" htmlFor="price" error={errors.price} required>
+            <input id="price" name="price" type="number" min="0" inputMode="numeric"
+              value={values.price} onChange={handleChange} />
+          </FormField>
+          <FormField label="Size (m²)" htmlFor="size" error={errors.size}>
+            <input id="size" name="size" type="number" min="0" inputMode="numeric"
+              value={values.size} onChange={handleChange} />
+          </FormField>
+          <FormField label="Levels" htmlFor="levels" error={errors.levels}>
+            <input id="levels" name="levels" type="number" min="0"
+              value={values.levels} onChange={handleChange} />
+          </FormField>
+          <FormField label="Bedrooms" htmlFor="bedrooms" error={errors.bedrooms}>
+            <input id="bedrooms" name="bedrooms" type="number" min="0"
+              value={values.bedrooms} onChange={handleChange} />
+          </FormField>
+          <FormField label="Bathrooms" htmlFor="bathrooms" error={errors.bathrooms}>
+            <input id="bathrooms" name="bathrooms" type="number" min="0"
+              value={values.bathrooms} onChange={handleChange} />
+          </FormField>
+        </div>
+
+        <FormField label="Description" htmlFor="description" error={errors.description}>
+          <textarea id="description" name="description" rows="5"
+            value={values.description} onChange={handleChange} />
+        </FormField>
+
+        <button type="submit" className="btn-primary" disabled={submitting}>
+          {submitting ? 'Saving…' : 'Create ad'}
+        </button>
+      </form>
+    </section>
+  );
+}
