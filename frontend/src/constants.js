@@ -7,3 +7,10 @@ export const AD_TYPES = [
     { value: 'donation', label: 'Donation' },
 ];
 
+export const PROPERTY_TYPES = [
+    { value: 'house', label: 'House' },
+    { value: 'apartment', label: 'Apartment' },
+    { value: 'maisonette', label: 'Maisonette' },
+    { value: 'land', label: 'Land' },
+
+];
