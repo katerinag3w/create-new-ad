@@ -70,8 +70,8 @@ export default function CreateAdPage() {
     setSubmitting(true);
     setSubmitError('');
     try {
-      const ad = await createAd(toPayload(values));
-      navigate(`/ads/${ad._id}`);
+      await createAd(toPayload(values));
+      navigate('/ads');
     } catch (err) {
       if (err.errors) setErrors(err.errors); // field errors from the backend
       setSubmitError(err.message);

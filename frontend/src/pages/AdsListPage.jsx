@@ -4,7 +4,7 @@ import { listAds } from '../api/ads';
 import { formatPrice, labelOf } from '../utils/format';
 import { AD_TYPES, PROPERTY_TYPES } from '../constants';
 
-/** Page that lists all saved ads. */
+/** Page that shows all saved ads (the persisted form data). */
 export default function AdsListPage() {
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +38,38 @@ export default function AdsListPage() {
       <ul className="ad-list">
         {ads.map((ad) => (
           <li key={ad._id} className="ad-card">
-            <Link to={`/ads/${ad._id}`}>
-              <h2>{ad.title}</h2>
-              <p>
-                {labelOf(PROPERTY_TYPES, ad.propertyType)} · {labelOf(AD_TYPES, ad.adType)} · {ad.area.name}
-              </p>
-              <span className="ad-card__price">{formatPrice(ad.price)}</span>
-            </Link>
+            <h2>{ad.title}</h2>
+            <p className="ad-card__price">{formatPrice(ad.price)}</p>
+
+            <dl className="details">
+              <div>
+                <dt>Ad type</dt>
+                <dd>{labelOf(AD_TYPES, ad.adType)}</dd>
+              </div>
+              <div>
+                <dt>Property type</dt>
+                <dd>{labelOf(PROPERTY_TYPES, ad.propertyType)}</dd>
+              </div>
+              <div>
+                <dt>Area</dt>
+                <dd>{ad.area.name}</dd>
+              </div>
+              {/* Optional fields are shown only if they were filled in */}
+              {ad.size != null && (
+                <div>
+                  <dt>Size</dt>
+                  <dd>{ad.size} m²</dd>
+                </div>
+              )}
+              {ad.bedrooms != null && (
+                <div>
+                  <dt>Bedrooms</dt>
+                  <dd>{ad.bedrooms}</dd>
+                </div>
+              )}
+            </dl>
+
+            {ad.description && <p className="ad-card__description">{ad.description}</p>}
           </li>
         ))}
       </ul>

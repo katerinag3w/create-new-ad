@@ -1,7 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
 import CreateAdPage from './pages/CreateAdPage';
 import AdsListPage from './pages/AdsListPage';
-import AdDetailsPage from './pages/AdDetailsPage';
 
 
 /** App shell: header navigation + page routes. */
@@ -17,9 +16,7 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<CreateAdPage />} />
-          <Route path="/ads" element={<AdsListPage />} />
-          <Route path="/ads/:id" element={<AdDetailsPage />} />
-          <Route path="*" element={<p className="page">Page not found</p>} />
+          <Route path="/ads" element={<AdsListPage />} />          <Route path="*" element={<p className="page">Page not found</p>} />
         </Routes>
       </main>
     </>
