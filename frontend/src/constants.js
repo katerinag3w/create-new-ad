@@ -1,5 +1,7 @@
 export const MIN_AREA_CHARS = 3;
 
+export const TITLE_MAX_LENGTH = 155; // same as maxlength in backend/src/models/Ad.js
+
 export const AD_TYPES = [
     { value: 'sale', label: 'Sale' },
     { value: 'rent', label: 'Rent' },

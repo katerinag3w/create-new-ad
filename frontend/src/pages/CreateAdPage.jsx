@@ -4,7 +4,7 @@ import AreaAutocomplete from '../components/AreaAutocomplete/AreaAutocomplete';
 import FormField from '../components/FormField';
 import { createAd } from '../api/ads';
 import { validateAd } from '../utils/validation';
-import { AD_TYPES, PROPERTY_TYPES } from '../constants';
+import { AD_TYPES, PROPERTY_TYPES, TITLE_MAX_LENGTH } from '../constants';
 
 const INITIAL_VALUES = {
   title: '',
@@ -52,6 +52,13 @@ export default function CreateAdPage() {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   }
 
+  // Price: keep only digits (also blocks e, -, . and pasted text)
+  function handleDigitsChange(e) {
+    const { name, value } = e.target;
+    setValues((prev) => ({ ...prev, [name]: value.replace(/\D/g, '') }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+
   function handleAreaChange(area) {
     setValues((prev) => ({ ...prev, area }));
     if (area) setErrors((prev) => ({ ...prev, area: undefined }));
@@ -85,26 +92,17 @@ export default function CreateAdPage() {
 
       <form className="ad-form" onSubmit={handleSubmit} noValidate>
         <FormField label="Title" htmlFor="title" error={errors.title} required>
-          <input id="title" name="title" value={values.title} onChange={handleChange} />
+          <input id="title" name="title" maxLength={TITLE_MAX_LENGTH}
+            value={values.title} onChange={handleChange} />
         </FormField>
 
-        <fieldset className="form-field">
-          <legend>Ad type *</legend>
-          <div className="radio-group">
+        <FormField label="Ad type" htmlFor="adType" error={errors.adType} required>
+          <select id="adType" name="adType" value={values.adType} onChange={handleChange}>
             {AD_TYPES.map((t) => (
-              <label key={t.value} className="radio">
-                <input
-                  type="radio"
-                  name="adType"
-                  value={t.value}
-                  checked={values.adType === t.value}
-                  onChange={handleChange}
-                />
-                {t.label}
-              </label>
+              <option key={t.value} value={t.value}>{t.label}</option>
             ))}
-          </div>
-        </fieldset>
+          </select>
+        </FormField>
 
         <FormField label="Property type" htmlFor="propertyType" error={errors.propertyType} required>
           <select id="propertyType" name="propertyType" value={values.propertyType} onChange={handleChange}>
@@ -120,8 +118,8 @@ export default function CreateAdPage() {
 
         <div className="form-grid">
           <FormField label="Price (€)" htmlFor="price" error={errors.price} required>
-            <input id="price" name="price" type="number" min="0" inputMode="numeric"
-              value={values.price} onChange={handleChange} />
+            <input id="price" name="price" type="text" inputMode="numeric"
+              value={values.price} onChange={handleDigitsChange} />
           </FormField>
           <FormField label="Size (m²)" htmlFor="size" error={errors.size}>
             <input id="size" name="size" type="number" min="0" inputMode="numeric"
