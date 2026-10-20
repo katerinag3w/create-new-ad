@@ -8,8 +8,8 @@ import { AD_TYPES, PROPERTY_TYPES, TITLE_MAX_LENGTH } from '../constants';
 
 const INITIAL_VALUES = {
   title: '',
-  adType: 'buy',
-  propertyType: 'house',
+  adType: '',
+  propertyType: '',
   area: null,
   price: '',
   size: '',
@@ -94,6 +94,7 @@ export default function CreateAdPage() {
 
         <FormField label="Ad type" htmlFor="adType" error={errors.adType} required>
           <select id="adType" name="adType" value={values.adType} onChange={handleChange}>
+            <option value="" disabled>Select ad type</option>
             {AD_TYPES.map((t) => (
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
@@ -102,6 +103,7 @@ export default function CreateAdPage() {
 
         <FormField label="Property type" htmlFor="propertyType" error={errors.propertyType} required>
           <select id="propertyType" name="propertyType" value={values.propertyType} onChange={handleChange}>
+            <option value="" disabled>Select property type</option>
             {PROPERTY_TYPES.map((t) => (
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
