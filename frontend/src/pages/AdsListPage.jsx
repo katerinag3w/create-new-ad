@@ -41,8 +41,7 @@ export default function AdsListPage() {
             <Link to={`/ads/${ad._id}`}>
               <h2>{ad.title}</h2>
               <p>
-                {labelOf(PROPERTY_TYPES, ad.propertyType)} for {labelOf(AD_TYPES, ad.adType).toLowerCase()}
-                {' · '}{ad.area.name}
+                {labelOf(PROPERTY_TYPES, ad.propertyType)} · {labelOf(AD_TYPES, ad.adType)} · {ad.area.name}
               </p>
               <span className="ad-card__price">{formatPrice(ad.price)}</span>
             </Link>

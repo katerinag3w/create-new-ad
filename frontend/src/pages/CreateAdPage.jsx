@@ -8,7 +8,7 @@ import { AD_TYPES, PROPERTY_TYPES, TITLE_MAX_LENGTH } from '../constants';
 
 const INITIAL_VALUES = {
   title: '',
-  adType: 'sale',
+  adType: 'buy',
   propertyType: 'house',
   area: null,
   price: '',
