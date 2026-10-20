@@ -3,12 +3,11 @@ import Ad from '../models/Ad.js';
 import ApiError from '../utils/ApiError.js';
 /** POST /api/ads – create a new ad (body already validated). */
 export async function createAd(req, res) {
-    const { title, adType, propertyType, area, price, size, levels, bedrooms, bathrooms, description } =
-        req.body;
+    const { title, adType, propertyType, area, price, size, bedrooms, description } = req.body;
     const ad = await Ad.create({
         title, adType, propertyType,
         area: { id: String(area.id), name: area.name },
-        price, size, levels, bedrooms, bathrooms, description,
+        price, size, bedrooms, description,
     });
     res.status(201).json(ad);
 }

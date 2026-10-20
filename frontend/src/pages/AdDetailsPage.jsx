@@ -38,9 +38,7 @@ export default function AdDetailsPage() {
   // Optional fields are shown only if they were filled in
   const optional = [
     ['Size', ad.size != null && `${ad.size} m²`],
-    ['Levels', ad.levels],
     ['Bedrooms', ad.bedrooms],
-    ['Bathrooms', ad.bathrooms],
   ].filter(([, value]) => value != null && value !== false);
 
   return (

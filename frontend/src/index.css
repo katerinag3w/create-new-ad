@@ -88,6 +88,12 @@ textarea {
   background: var(--surface);
 }
 
+/* Only allow vertical resizing, so the textarea can't be dragged wider than the form */
+textarea {
+  max-width: 100%;
+  resize: vertical;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -194,6 +200,11 @@ textarea:focus {
 .details dd {
   margin: 0;
   font-weight: 600;
+}
+
+/* Long words or URLs without spaces wrap instead of overflowing the page */
+.page {
+  overflow-wrap: anywhere;
 }
 
 /* Tablet and up: more columns */

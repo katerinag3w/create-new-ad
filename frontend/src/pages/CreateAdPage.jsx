@@ -13,9 +13,7 @@ const INITIAL_VALUES = {
   area: null,
   price: '',
   size: '',
-  levels: '',
   bedrooms: '',
-  bathrooms: '',
   description: '',
 };
 
@@ -30,9 +28,7 @@ function toPayload(values) {
     area: { id: values.area.id, name: values.area.name },
     price: toNumber(values.price),
     size: toNumber(values.size),
-    levels: toNumber(values.levels),
     bedrooms: toNumber(values.bedrooms),
-    bathrooms: toNumber(values.bathrooms),
     description: values.description.trim(),
   };
 }
@@ -125,19 +121,10 @@ export default function CreateAdPage() {
             <input id="size" name="size" type="number" min="0" inputMode="numeric"
               value={values.size} onChange={handleChange} />
           </FormField>
-          <FormField label="Levels" htmlFor="levels" error={errors.levels}>
-            <input id="levels" name="levels" type="number" min="0"
-              value={values.levels} onChange={handleChange} />
-          </FormField>
           <FormField label="Bedrooms" htmlFor="bedrooms" error={errors.bedrooms}>
             <input id="bedrooms" name="bedrooms" type="number" min="0"
               value={values.bedrooms} onChange={handleChange} />
-          </FormField>
-          <FormField label="Bathrooms" htmlFor="bathrooms" error={errors.bathrooms}>
-            <input id="bathrooms" name="bathrooms" type="number" min="0"
-              value={values.bathrooms} onChange={handleChange} />
-          </FormField>
-        </div>
+          </FormField>        </div>
 
         <FormField label="Description" htmlFor="description" error={errors.description}>
           <textarea id="description" name="description" rows="5"

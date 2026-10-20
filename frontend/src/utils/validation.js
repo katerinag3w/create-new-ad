@@ -19,7 +19,7 @@ export function validateAd(values) {
         errors.price = 'Enter a price greater than 0';
     }
 
-    for (const field of ['size', 'levels', 'bedrooms', 'bathrooms']) {
+    for (const field of ['size', 'bedrooms']) {
         if (values[field] !== '' && Number(values[field]) < 0) {
             errors[field] = 'Must be 0 or more';
         }

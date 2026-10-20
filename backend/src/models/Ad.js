@@ -16,9 +16,7 @@ const adSchema = new mongoose.Schema(
         },
         price: { type: Number, required: [true, 'Price is required'], min: [1, 'Price must be greater than 0'] },
         size: { type: Number, min: 0 },
-        levels: { type: Number, min: 0 },
         bedrooms: { type: Number, min: 0 },
-        bathrooms: { type: Number, min: 0 },
         description: { type: String, trim: true, maxlength: 2000 },
     },
     { timestamps: true }, // adds createdAt / updatedAt
