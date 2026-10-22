@@ -31,7 +31,11 @@ npm install
 cp .env.example .env     # Windows: copy .env.example .env
 ```
 
-Open `backend/.env` and set `AUTOCOMPLETE_API_URL`. Then run:
+> **Required:** open `backend/.env` and fill in `AUTOCOMPLETE_API_URL` with the URL of the
+> autocomplete API, e.g. `AUTOCOMPLETE_API_URL=https://<autocomplete-api-url>/`.
+> Without it the area search does not work (`500 Autocomplete API is not configured`).
+
+Then run:
 
 ```bash
 npm run dev
@@ -73,6 +77,11 @@ Escape work in the list. The browser never calls the external API directly. The 
 proxies it, caches results in memory, and times out after 5 seconds (`502` if the API
 fails, `504` on timeout).
 
+**Area check on submit:** The form sends the selected area's `placeId` as `area.id`. The
+backend only saves the ad if that id came from the autocomplete API. It first checks the
+areas it has already sent to the browser. If the id isn't there (for example after a
+restart), it searches the API by the area name. A made-up id is rejected with `400`.
+
 **API**
 
 | Method | Path                   | Description                                       |
@@ -84,3 +93,42 @@ fails, `504` on timeout).
 | `GET`  | `/api/ads/:id`         | One ad: `400` for an invalid id, `404` if missing |
 
 Errors share one shape: `{ "message": "...", "errors": { "field": "..." } }`.
+
+## Tests
+
+Run in `backend/` or `frontend/`:
+
+```bash
+npm test
+```
+
+The tests don't call the real autocomplete API (`fetch` is mocked), and the backend tests
+use an in-memory MongoDB, so no `.env` is needed.
+
+- **Backend** (`backend/tests/`): the cache, the autocomplete service (response mapping,
+  `502`/`504`/invalid data), and the HTTP API with supertest (validation, placeId check,
+  caching, listing ads).
+- **Frontend** (`*.test.jsx` next to the code): the area autocomplete (3-character minimum,
+  debounce, mouse/keyboard selection, errors), the create-ad form (validation, submitted
+  payload with the placeId, backend errors), and the validation helpers.
+
+## Packages used
+
+**Backend**
+
+- [express](https://expressjs.com): HTTP server and routing
+- [mongoose](https://mongoosejs.com): MongoDB models and validation
+- [mongodb-memory-server](https://github.com/typegoose/mongodb-memory-server): in-memory MongoDB when `MONGODB_URI` is empty, and for tests
+- [cors](https://github.com/expressjs/cors): allows requests from the frontend
+- [dotenv](https://github.com/motdotla/dotenv): loads `backend/.env`
+- [nodemon](https://nodemon.io) (dev): restarts the server on changes
+- [vitest](https://vitest.dev) + [supertest](https://github.com/ladjs/supertest) (dev): tests
+
+**Frontend**
+
+- [react](https://react.dev) + react-dom: UI
+- [react-router-dom](https://reactrouter.com): pages (form and ads list)
+- [vite](https://vite.dev): dev server, build, and `/api` proxy
+- [vitest](https://vitest.dev), [jsdom](https://github.com/jsdom/jsdom),
+  [Testing Library](https://testing-library.com) (react, dom, jest-dom, user-event) (dev): tests
+- [eslint](https://eslint.org) (dev): linting

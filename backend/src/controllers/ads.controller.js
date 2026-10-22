@@ -1,12 +1,20 @@
 import mongoose from 'mongoose';
 import Ad from '../models/Ad.js';
 import ApiError from '../utils/ApiError.js';
-/** POST /api/ads – create a new ad (body already validated). */
+import { findArea } from '../services/autocomplete.service.js';
+/**
+ * POST /api/ads – create a new ad (body already validated).
+ * The area is checked against the autocomplete API so a client can't send a made-up placeId.
+ */
 export async function createAd(req, res) {
     const { title, adType, propertyType, area, price, size, bedrooms, description } = req.body;
+    const match = await findArea(String(area.id), area.name);
+    if (!match) {
+        throw new ApiError(400, 'Validation failed', { area: 'Please select an area from the list' });
+    }
     const ad = await Ad.create({
         title, adType, propertyType,
-        area: { id: String(area.id), name: area.name },
+        area: { id: match.id, name: match.name }, // stored as the API returns it
         price, size, bedrooms, description,
     });
     res.status(201).json(ad);

@@ -18,8 +18,11 @@ export default function errorHandler(err, req, res, next) {
     // Invalid JSON body
     if (err.type === 'entity.parse.failed') status = 400;
     if (status >= 500) console.error(err);
+    // Our own ApiErrors (e.g. 502/504 from the autocomplete API) have safe messages;
+    // hide the details of unexpected server errors.
+    const isUnexpected = status >= 500 && err.name !== 'ApiError';
     res.status(status).json({
-        message: status >= 500 ? 'Something went wrong' : err.message,
+        message: isUnexpected ? 'Something went wrong' : err.message,
         ...(errors && { errors }),
     });
 }

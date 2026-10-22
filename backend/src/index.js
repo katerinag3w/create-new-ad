@@ -7,8 +7,9 @@ const startServer = async () => {
     try {
         await connectDB();
 
-        app.listen(process.env.PORT || 8000, () => {
-            console.log(`Server is running on PORT: ${process.env.PORT}`)
+        const port = process.env.PORT || 8000;
+        app.listen(port, () => {
+            console.log(`Server is running on PORT: ${port}`)
         });
     } catch (error) {
         console.log("Mongo db connection failed", error);
